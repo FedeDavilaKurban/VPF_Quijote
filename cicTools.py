@@ -170,15 +170,16 @@ def cic_stats_jk(tree, n, r, lbox, jkbins):
                 sph = spheres[mask,:]
                 sph = sph[:n]
 
-                ngal = np.zeros(n)
-                sphtree = spatial.cKDTree(sph)
-                idx = sphtree.query_ball_tree(tree,r)
-                for ii in range(n):
-                    ngal[ii] = len(idx[ii])
+                # ngal = np.zeros(n)
+                # sphtree = spatial.cKDTree(sph)
+                # idx = sphtree.query_ball_tree(tree,r)
+                # for ii in range(n):
+                #     ngal[ii] = len(idx[ii])
 
                 #for ii in range(n):
                 #    ngal[ii] = len(tree.query_ball_point(sph[ii],r))
 
+                ngal = tree.query_ball_point(sph,r,return_length=True)
 
                 #VPF
                 P0_jk[i,j,k] = len(np.where(ngal==0)[0])/n
