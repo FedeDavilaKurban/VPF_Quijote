@@ -694,3 +694,95 @@ def delta_NXi(NXi,N_mean,N_mean_std,xi_mean,xi_mean_std):
     """
     import numpy as np
     return NXi * np.sqrt((N_mean_std/N_mean)**2+(xi_mean_std/xi_mean)**2)
+
+#%%
+def cic_stats_jk_try(tree, n, r, lbox, jkbins):
+    """
+    Returns Counts in Cells statistics with Jackknife resampling
+
+    Args:
+        tree (ckdtree): coordinates
+        n (int): Num of spheres
+        r (float): Radius of the spheres
+        seed (int, optional): Random seed. Defaults to 0.
+        jkbins (int): Num. of divisions per axis for JK resampling
+
+    Returns:
+        Jackknife Mean and Standard Dev.:
+        float: Reduced VPF
+        float: Scaling Variable (<N>*<Xi>)
+        float: VPF
+        float: Mean number of points in spheres of radius r (<N>)
+        float: Averaged 2pcf (variance of counts in cells, <Xi>)
+
+    """
+    import numpy as np
+    from scipy import spatial
+    
+    a = 0
+    b = lbox
+    n_ = int(n*2) # I oversample the space and then choose the first n spheres after applying JK mask
+
+    np.random.seed(123123123)
+    spheres = (b-a)*np.random.rand(n_,3) + a
+
+    rbins = np.linspace(0.,lbox,jkbins+1)
+    P0_jk = np.zeros(jkbins)
+    N_mean_jk = np.zeros(jkbins)
+    xi_mean_jk = np.zeros(jkbins)
+    chi_jk = np.zeros(jkbins)
+    NXi_jk = np.zeros(jkbins)
+
+    for i in range(jkbins):
+        mask2 = (spheres[:,0] < rbins[i+1])
+        mask1 = (spheres[:,0] > rbins[i])        
+        mask_ = np.logical_and(mask1,mask2)
+
+        mask = np.invert(mask_)
+        sph = spheres[mask,:]
+        sph = sph[:n]
+
+        # ngal = np.zeros(n)
+        # sphtree = spatial.cKDTree(sph)
+        # idx = sphtree.query_ball_tree(tree,r)
+        # for ii in range(n):
+        #     ngal[ii] = len(idx[ii])
+
+        #for ii in range(n):
+        #    ngal[ii] = len(tree.query_ball_point(sph[ii],r))
+
+        ngal = tree.query_ball_point(sph,r,return_length=True)
+
+        #VPF
+        P0_jk[i] = len(np.where(ngal==0)[0])/n
+
+        N_mean_jk[i] = np.mean(ngal)
+
+        #xi_mean
+        xi_mean_jk[i] = (np.mean((ngal-N_mean_jk[i])**2)-N_mean_jk[i])/N_mean_jk[i]**2
+        
+        chi_jk[i] = -np.log(P0_jk[i])/N_mean_jk[i]
+        
+        NXi_jk[i] = N_mean_jk[i]*xi_mean_jk[i]
+    
+    P0 = np.mean(P0_jk.flat)
+    P0_std = np.std(P0_jk.flat,ddof=1)
+
+    N_mean = np.mean(N_mean_jk.flat)
+    N_mean_std = np.std(N_mean_jk.flat,ddof=1)
+
+    xi_mean = np.mean(xi_mean_jk.flat)
+    xi_mean_std = np.std(xi_mean_jk.flat,ddof=1)
+
+    # chi = np.mean(chi_jk.flat)
+    # chi_std = np.std(chi_jk.flat,ddof=1)
+    chi = np.ma.masked_invalid(chi_jk.flat).mean()
+    chi_std = np.ma.masked_invalid(chi_jk.flat).std(ddof=1)
+
+    NXi = np.mean(NXi_jk.flat)
+    NXi_std = np.std(NXi_jk.flat,ddof=1)
+
+    del ngal, P0_jk, N_mean_jk, xi_mean_jk, chi_jk, NXi_jk
+    
+    return chi, NXi, P0, N_mean, xi_mean, \
+        chi_std, NXi_std, P0_std, N_mean_std, xi_mean_std 
