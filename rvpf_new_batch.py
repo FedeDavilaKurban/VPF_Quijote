@@ -142,11 +142,11 @@ def vpf_new(rmin,rmax,rbins,njk,nsph,BoxSize,gxs,verbose=True):
 ###########################################################
 ###########################################################
 
+import os
 import numpy as np
 from astropy.io import ascii
 from astropy.table import Table
 import yaml
-import os
 
 # Load YAML configuration
 with open("config_vpfnew.yml", "r") as file:
@@ -154,7 +154,7 @@ with open("config_vpfnew.yml", "r") as file:
 
 # Access the configuration values
 cosm = config["settings"]["cosm"]
-simnum = config["settings"]["simnum"]
+#simnum = config["settings"]["simnum"]
 snapdir = config["settings"]["snapdir"]
 snapnum = config["settings"]["snapnum"]
 ns = config["settings"]["ns"]
@@ -164,15 +164,11 @@ rmax = config["settings"]["rmax"]
 njk = config["settings"]["njk"]
 BoxSize = config["settings"]["BoxSize"]
 
-folders = os.listdir(path=snapdir)
+simnums = os.listdir(snapdir+cosm)
 
-for folder in folders:
-
-    print(np.where(folders==folder),'/',len(folders))
+for simnum in simnums:
 
     gxs = read_quijote(snapdir+f'{cosm}/{simnum}',snapnum)
-
-<<<<<<< HEAD
 
     N_mean = np.zeros(rbin)
     N_mean_var = np.zeros(rbin)
@@ -181,15 +177,6 @@ for folder in folders:
     chi_std = np.zeros(rbin)
     xi = np.zeros(rbin)
     xi_var = np.zeros(rbin)
-=======
-N_mean = np.zeros(rbin)
-N_mean_var = np.zeros(rbin)
-P0 = np.zeros(rbin)
-chi = np.zeros(rbin)
-chi_std = np.zeros(rbin)
-xi = np.zeros(rbin)
-xi_var = np.zeros(rbin)
->>>>>>> 9671dc44ceedd79e77d768d0b0c8b57dddc6e863
 
     N_mean, N_mean_var, P0, chi, chi_std, xi, xi_var = vpf_new(rmin,rmax,rbin,njk,ns,BoxSize,gxs,verbose=True)
     vpfdata = Table()
