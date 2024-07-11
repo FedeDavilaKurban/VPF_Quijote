@@ -172,8 +172,6 @@ for folder in folders:
 
     gxs = read_quijote(snapdir+f'{cosm}/{simnum}',snapnum)
 
-<<<<<<< HEAD
-
     N_mean = np.zeros(rbin)
     N_mean_var = np.zeros(rbin)
     P0 = np.zeros(rbin)
@@ -181,15 +179,6 @@ for folder in folders:
     chi_std = np.zeros(rbin)
     xi = np.zeros(rbin)
     xi_var = np.zeros(rbin)
-=======
-N_mean = np.zeros(rbin)
-N_mean_var = np.zeros(rbin)
-P0 = np.zeros(rbin)
-chi = np.zeros(rbin)
-chi_std = np.zeros(rbin)
-xi = np.zeros(rbin)
-xi_var = np.zeros(rbin)
->>>>>>> 9671dc44ceedd79e77d768d0b0c8b57dddc6e863
 
     N_mean, N_mean_var, P0, chi, chi_std, xi, xi_var = vpf_new(rmin,rmax,rbin,njk,ns,BoxSize,gxs,verbose=True)
     vpfdata = Table()
