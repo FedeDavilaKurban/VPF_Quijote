@@ -146,6 +146,7 @@ import numpy as np
 from astropy.io import ascii
 from astropy.table import Table
 import yaml
+import os
 
 # Load YAML configuration
 with open("config_vpfnew.yml", "r") as file:
@@ -163,28 +164,34 @@ rmax = config["settings"]["rmax"]
 njk = config["settings"]["njk"]
 BoxSize = config["settings"]["BoxSize"]
 
-gxs = read_quijote(snapdir+f'{cosm}/{simnum}',snapnum)
+folders = os.listdir(path=snapdir)
+
+for folder in folders:
+
+    print(np.where(folders==folder),'/',len(folders))
+
+    gxs = read_quijote(snapdir+f'{cosm}/{simnum}',snapnum)
 
 
-N_mean = np.zeros(rbin)
-N_mean_var = np.zeros(rbin)
-P0 = np.zeros(rbin)
-chi = np.zeros(rbin)
-chi_std = np.zeros(rbin)
-xi = np.zeros(rbin)
-xi_var = np.zeros(rbin)
+    N_mean = np.zeros(rbin)
+    N_mean_var = np.zeros(rbin)
+    P0 = np.zeros(rbin)
+    chi = np.zeros(rbin)
+    chi_std = np.zeros(rbin)
+    xi = np.zeros(rbin)
+    xi_var = np.zeros(rbin)
 
-N_mean, N_mean_var, P0, chi, chi_std, xi, xi_var = vpf_new(rmin,rmax,rbin,njk,ns,BoxSize,gxs,verbose=True)
-vpfdata = Table()
-vpfdata['N_mean'] = N_mean
-vpfdata['N_mean_var'] = N_mean_var
-vpfdata['P0'] = P0
-vpfdata['chi'] = chi
-vpfdata['chi_std'] = chi_std
-vpfdata['xi'] = xi
-vpfdata['xi_var'] = xi_var
+    N_mean, N_mean_var, P0, chi, chi_std, xi, xi_var = vpf_new(rmin,rmax,rbin,njk,ns,BoxSize,gxs,verbose=True)
+    vpfdata = Table()
+    vpfdata['N_mean'] = N_mean
+    vpfdata['N_mean_var'] = N_mean_var
+    vpfdata['P0'] = P0
+    vpfdata['chi'] = chi
+    vpfdata['chi_std'] = chi_std
+    vpfdata['xi'] = xi
+    vpfdata['xi_var'] = xi_var
 
-datafilename = f'../data/vpfdata_{rmin}-{rmax}-{rbin}-{njk}-{ns}-{cosm}-{simnum}.dat'
-ascii.write(vpfdata,datafilename,overwrite=True)
-print('File created:',datafilename)
+    datafilename = f'../data/vpfdata_{rmin}-{rmax}-{rbin}-{njk}-{ns}-{cosm}-{simnum}.dat'
+    ascii.write(vpfdata,datafilename,overwrite=True)
+    print('File created:',datafilename)
 
