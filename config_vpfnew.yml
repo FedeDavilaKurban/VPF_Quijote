@@ -1,12 +1,7 @@
 settings:
   cosm: 'fiducial' # cosmology
-<<<<<<< HEAD
   simnum: 0 # folder given name
   snapdir: '/home/fdavilakurban/mnts/clemente/Proyectos/VPF_Quijote/data/quijote/Halos/FoF/' #folder hosting the catalogue
-=======
-  simnum: 1 # folder given name
-  snapdir: '/home/fdavilakurban/mnt/clemente/Proyectos/VPF_Quijote/data/quijote/Halos/FoF/' #folder hosting the catalogue
->>>>>>> 9671dc44ceedd79e77d768d0b0c8b57dddc6e863
   snapnum: 4 # corresponds to z=0 
   ns: 10000 # num. of probing spheres
   rbin: 8 # bins of distance r
