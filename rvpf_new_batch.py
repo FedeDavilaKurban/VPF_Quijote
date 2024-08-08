@@ -82,7 +82,7 @@ def vpf_new(rmin,rmax,rbins,njk,nsph,BoxSize,gxs,verbose=True):
     lbox = BoxSize
 
     # Jackknife Parameters
-    njk = 10 #N. of Jackknifes
+    #njk = 10 #N. of Jackknifes
     jackk_bins = np.linspace(0,lbox,njk+1)
 
     newgxs = perrep_array(gxs,lbox,rmax)
