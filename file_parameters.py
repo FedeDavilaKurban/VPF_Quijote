@@ -6,7 +6,8 @@ file_parameters_vpf = dict(
         "rmax":int(25),
         "njk":int(10),
         "space":'zspace',
-        "filedir":'../data/output/'
+        "filedir":'../data/output/',
+        "axis":1
     })
 
 file_parameters_2pcf = dict(
